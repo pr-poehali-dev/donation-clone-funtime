@@ -18,7 +18,7 @@ const RANKS = [
     id: "elite",
     cls: "rank-elite",
     name: "ELITE",
-    price: 899,
+    price: 190,
     color: "hsl(43 95% 55%)",
     emoji: "👑",
     perks: ["Приставка [ELITE]", "Все права PREMIUM", "Приоритетный вход", "Доступ к /god", "Доступ к /vanish"],
