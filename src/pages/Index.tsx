@@ -5,15 +5,6 @@ type Tab = "ranks" | "currency" | "items" | "titles";
 
 const RANKS = [
   {
-    id: "vip",
-    cls: "rank-vip",
-    name: "VIP",
-    price: 199,
-    color: "hsl(142 70% 45%)",
-    emoji: "⚡",
-    perks: ["Приставка [VIP] в чате", "Доступ к /fly на 1 час/день", "3 точки дома", "Доступ к /nick", "Цветной ник"],
-  },
-  {
     id: "premium",
     cls: "rank-premium",
     name: "PREMIUM",
