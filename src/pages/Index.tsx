@@ -100,7 +100,7 @@ export default function Index() {
 
           <div className="hidden md:flex items-center gap-6 text-sm">
             <span className="server-online">847 онлайн</span>
-            <span className="text-muted-foreground text-xs font-mono">play.shockbyte.ru</span>
+            <span className="text-muted-foreground text-xs font-mono">play.shockbyte.pro</span>
           </div>
 
           <button
@@ -321,7 +321,7 @@ export default function Index() {
           <div className="flex items-center gap-2">
             <span className="text-base">⛏️</span>
             <span className="font-black text-foreground">ShockByte</span>
-            <span>· play.shockbyte.ru</span>
+            <span>· play.shockbyte.pro</span>
           </div>
           <div className="flex gap-5">
             <a href="#" className="hover:text-foreground transition-colors">Правила</a>
