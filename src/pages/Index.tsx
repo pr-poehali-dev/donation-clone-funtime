@@ -118,7 +118,7 @@ export default function Index() {
       <div className="relative border-b border-border overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent pointer-events-none" />
         <div className="max-w-6xl mx-auto px-6 py-12 animate-fade-up">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div className="flex flex-col items-center text-center gap-4">
             <div>
               <h1 className="text-4xl md:text-5xl font-black mb-2 text-foreground">
                 Магазин <span className="gold-shimmer">ShockByte</span>
@@ -127,9 +127,9 @@ export default function Index() {
                 Поддержи сервер и получи уникальные привилегии. Все покупки активируются мгновенно.
               </p>
             </div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 flex-shrink-0">
+            <div className="flex gap-3">
               {STATS.map(s => (
-                <div key={s.label} className="bg-card border border-border rounded-lg px-4 py-3 text-center min-w-[90px]">
+                <div key={s.label} className="bg-card border border-border rounded-lg px-5 py-3 text-center">
                   <div className="text-lg font-black text-foreground">{s.value}</div>
                   <div className="text-xs text-muted-foreground mt-0.5">{s.label}</div>
                 </div>
