@@ -1,252 +1,335 @@
 import { useState } from "react";
 import Icon from "@/components/ui/icon";
 
-const PRESET_AMOUNTS = [100, 250, 500, 1000, 2500, 5000];
+type Tab = "ranks" | "currency" | "items" | "titles";
 
-const RECENT_DONATES = [
-  { id: 1, name: "Александр М.", amount: 2500, message: "Отличный стрим, продолжай в том же духе!", time: "2 мин назад", avatar: "АМ" },
-  { id: 2, name: "Виктория Л.", amount: 500, message: "Спасибо за контент!", time: "8 мин назад", avatar: "ВЛ" },
-  { id: 3, name: "Дмитрий К.", amount: 1000, message: "", time: "15 мин назад", avatar: "ДК" },
-  { id: 4, name: "Анонимный", amount: 150, message: "Так держать 💪", time: "23 мин назад", avatar: "?" },
-  { id: 5, name: "Елена Р.", amount: 5000, message: "Лучший стример на платформе!", time: "41 мин назад", avatar: "ЕР" },
+const RANKS = [
+  {
+    id: "vip",
+    cls: "rank-vip",
+    name: "VIP",
+    price: 199,
+    color: "hsl(142 70% 45%)",
+    emoji: "⚡",
+    perks: ["Приставка [VIP] в чате", "Доступ к /fly на 1 час/день", "3 точки дома", "Доступ к /nick", "Цветной ник"],
+  },
+  {
+    id: "premium",
+    cls: "rank-premium",
+    name: "PREMIUM",
+    price: 449,
+    color: "hsl(210 80% 58%)",
+    emoji: "💎",
+    perks: ["Приставка [PREMIUM]", "/fly без ограничений", "10 точек дома", "/heal & /feed", "Кит каждые 12 часов", "Доступ к /tpa"],
+    popular: true,
+  },
+  {
+    id: "elite",
+    cls: "rank-elite",
+    name: "ELITE",
+    price: 899,
+    color: "hsl(43 95% 55%)",
+    emoji: "👑",
+    perks: ["Приставка [ELITE]", "Все права PREMIUM", "Приоритетный вход", "Доступ к /god", "Эксклюзивный кит", "Партиклы и эффекты"],
+  },
+  {
+    id: "legend",
+    cls: "rank-legend",
+    name: "LEGEND",
+    price: 1799,
+    color: "hsl(265 70% 62%)",
+    emoji: "🔮",
+    perks: ["Приставка [LEGEND]", "Все права ELITE", "Доступ к командам OP", "Личная арена PvP", "Уникальный плащ", "Поддержка 24/7"],
+  },
+];
+
+const CURRENCY = [
+  { id: "c1", coins: 1000,  bonus: 0,   price: 99,  emoji: "🪙" },
+  { id: "c2", coins: 3000,  bonus: 10,  price: 249, emoji: "🪙" },
+  { id: "c3", coins: 7500,  bonus: 25,  price: 499, emoji: "💰" },
+  { id: "c4", coins: 20000, bonus: 50,  price: 999, emoji: "💰", best: true },
+];
+
+const ITEMS = [
+  { id: "i1", name: "Стартовый кит",    price: 149, emoji: "🎒", desc: "Алмазный набор + еда на старт" },
+  { id: "i2", name: "Кейс «Фортуна»",   price: 299, emoji: "🎁", desc: "Случайный предмет высокого уровня" },
+  { id: "i3", name: "Набор строителя",   price: 399, emoji: "🏗️", desc: "Редкие блоки + инструменты" },
+  { id: "i4", name: "Кейс «Легенда»",   price: 599, emoji: "⚔️", desc: "Топовое оружие с зачарованиями" },
+  { id: "i5", name: "Эндер-набор",       price: 799, emoji: "🌌", desc: "Снаряжение для End-рейдов" },
+  { id: "i6", name: "Кит Повелителя",   price: 1499, emoji: "🔱", desc: "Лучший кит на сервере" },
+];
+
+const TITLES = [
+  { id: "t1", name: "«Герой Сервера»",   price: 249, color: "hsl(43 95% 55%)",  emoji: "🏆" },
+  { id: "t2", name: "«Тёмный Лорд»",     price: 349, color: "hsl(265 70% 62%)", emoji: "🌑" },
+  { id: "t3", name: "«Дракон»",          price: 399, color: "hsl(0 72% 55%)",   emoji: "🐉" },
+  { id: "t4", name: "«Хранитель»",       price: 299, color: "hsl(210 80% 58%)", emoji: "🛡️" },
+  { id: "t5", name: "«Бог Войны»",       price: 499, color: "hsl(0 65% 50%)",   emoji: "⚔️" },
+  { id: "t6", name: "«Строитель Эпох»",  price: 199, color: "hsl(142 70% 45%)", emoji: "🏛️" },
 ];
 
 const STATS = [
-  { label: "Всего донатов", value: "₽ 284 500", icon: "TrendingUp", sub: "+12% за месяц" },
-  { label: "Доноров", value: "1 247", icon: "Users", sub: "за всё время" },
-  { label: "Этот месяц", value: "₽ 41 200", icon: "Calendar", sub: "18 доноров" },
-  { label: "Топ донат", value: "₽ 15 000", icon: "Award", sub: "от BlackDragon" },
+  { label: "Онлайн сейчас", value: "847", icon: "Users" as const },
+  { label: "Всего игроков", value: "24 391", icon: "Globe" as const },
+  { label: "Версия", value: "1.20.4", icon: "Layers" as const },
+  { label: "Аптайм", value: "99.9%", icon: "Activity" as const },
 ];
 
 export default function Index() {
-  const [selectedAmount, setSelectedAmount] = useState<number | null>(500);
-  const [customAmount, setCustomAmount] = useState("");
-  const [message, setMessage] = useState("");
-  const [name, setName] = useState("");
-  const [paymentMethod, setPaymentMethod] = useState<"card" | "sbp" | "yoomoney">("card");
+  const [tab, setTab] = useState<Tab>("ranks");
+  const [cart, setCart] = useState<string[]>([]);
+  const [selectedCurrency, setSelectedCurrency] = useState<string>("c4");
 
-  const finalAmount = customAmount ? parseInt(customAmount) || 0 : (selectedAmount ?? 0);
+  const toggleCart = (id: string) =>
+    setCart(prev => prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]);
+
+  const cartCount = cart.length;
 
   return (
-    <div className="min-h-screen bg-background noise-overlay">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-50">
-        <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
+      <header className="sticky top-0 z-50 border-b border-border bg-card/80 backdrop-blur-md">
+        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-7 h-7 rounded bg-primary flex items-center justify-center">
-              <Icon name="Zap" size={14} className="text-primary-foreground" />
+            <div className="w-9 h-9 rounded-lg bg-primary flex items-center justify-center text-lg">⛏️</div>
+            <div>
+              <span className="font-black text-base text-foreground tracking-tight">ShockByte</span>
+              <span className="text-muted-foreground text-xs ml-2">Donate</span>
             </div>
-            <span className="font-semibold text-sm tracking-wide text-foreground">DONATIX</span>
           </div>
-          <div className="flex items-center gap-2 text-xs text-muted-foreground">
-            <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-            В эфире
+
+          <div className="hidden md:flex items-center gap-6 text-sm">
+            <span className="server-online">847 онлайн</span>
+            <span className="text-muted-foreground text-xs font-mono">play.shockbyte.ru</span>
           </div>
+
+          <button
+            className="relative flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-bold transition-all hover:brightness-110"
+          >
+            <Icon name="ShoppingCart" size={15} />
+            Корзина
+            {cartCount > 0 && (
+              <span className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-red-500 text-white text-xs font-black rounded-full flex items-center justify-center">
+                {cartCount}
+              </span>
+            )}
+          </button>
         </div>
       </header>
 
-      <div className="max-w-6xl mx-auto px-6 py-10">
-        {/* Profile Section */}
-        <div className="flex flex-col lg:flex-row gap-10 mb-12 animate-fade-in">
-          {/* Left: Profile */}
-          <div className="flex-1 min-w-0">
-            <div className="flex items-start gap-5 mb-6">
-              <div className="relative flex-shrink-0">
-                <div className="w-20 h-20 rounded-md bg-gradient-to-br from-primary/30 to-primary/10 border border-primary/30 flex items-center justify-center">
-                  <span className="text-2xl font-bold text-primary mono">PX</span>
-                </div>
-                <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 rounded-full border-2 border-background flex items-center justify-center">
-                  <div className="w-1.5 h-1.5 bg-white rounded-full" />
-                </div>
-              </div>
-              <div>
-                <h1 className="text-2xl font-bold text-foreground tracking-tight mb-1">PixelStorm</h1>
-                <p className="text-sm text-muted-foreground mb-3">Игровой стример · Киберспорт</p>
-                <div className="flex flex-wrap gap-2">
-                  {["CS2", "Valorant", "Dota 2"].map(tag => (
-                    <span key={tag} className="text-xs px-2 py-0.5 rounded border border-border text-muted-foreground mono">
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-              </div>
+      {/* Hero */}
+      <div className="relative border-b border-border overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent pointer-events-none" />
+        <div className="max-w-6xl mx-auto px-6 py-12 animate-fade-up">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div>
+              <h1 className="text-4xl md:text-5xl font-black mb-2 text-foreground">
+                Магазин <span className="gold-shimmer">ShockByte</span>
+              </h1>
+              <p className="text-muted-foreground text-sm max-w-md">
+                Поддержи сервер и получи уникальные привилегии. Все покупки активируются мгновенно.
+              </p>
             </div>
-
-            <p className="text-sm text-muted-foreground leading-relaxed mb-6 max-w-lg">
-              Профессиональный гейм-стример с 6-летним опытом. Играю в топ-100 рейтинга СНГ.
-              Каждый донат — это поддержка ежедневных трансляций и развития канала.
-              Ваша помощь позволяет закупать новое оборудование и улучшать качество контента.
-            </p>
-
-            <div className="divider-gold mb-6" />
-
-            {/* Stats Grid */}
-            <div className="grid grid-cols-2 gap-3">
-              {STATS.map((stat, i) => (
-                <div
-                  key={stat.label}
-                  className={`stat-card animate-fade-in-delay-${i + 1}`}
-                >
-                  <div className="flex items-start justify-between mb-3">
-                    <span className="text-xs text-muted-foreground font-medium uppercase tracking-widest">
-                      {stat.label}
-                    </span>
-                    <Icon name={stat.icon as "TrendingUp" | "Users" | "Calendar" | "Award"} size={14} className="text-primary/60 mt-0.5" />
-                  </div>
-                  <div className="text-xl font-bold text-foreground mono">{stat.value}</div>
-                  <div className="text-xs text-muted-foreground mt-1">{stat.sub}</div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 flex-shrink-0">
+              {STATS.map(s => (
+                <div key={s.label} className="bg-card border border-border rounded-lg px-4 py-3 text-center min-w-[90px]">
+                  <div className="text-lg font-black text-foreground">{s.value}</div>
+                  <div className="text-xs text-muted-foreground mt-0.5">{s.label}</div>
                 </div>
               ))}
             </div>
           </div>
+        </div>
+      </div>
 
-          {/* Right: Donate Form */}
-          <div className="w-full lg:w-[400px] flex-shrink-0 animate-fade-in-delay-2">
-            <div className="border border-border rounded-lg bg-card overflow-hidden">
-              {/* Form header */}
-              <div className="px-6 py-4 border-b border-border bg-muted/30">
-                <h2 className="font-semibold text-foreground text-sm uppercase tracking-widest">Поддержать донатом</h2>
-              </div>
-
-              <div className="p-6 space-y-5">
-                {/* Amount presets */}
-                <div>
-                  <label className="block text-xs text-muted-foreground mb-3 font-medium uppercase tracking-widest">
-                    Сумма (₽)
-                  </label>
-                  <div className="grid grid-cols-3 gap-2 mb-3">
-                    {PRESET_AMOUNTS.map(amt => (
-                      <button
-                        key={amt}
-                        onClick={() => { setSelectedAmount(amt); setCustomAmount(""); }}
-                        className={`amount-chip text-center mono ${selectedAmount === amt && !customAmount ? "selected" : ""}`}
-                      >
-                        {amt.toLocaleString("ru")}
-                      </button>
-                    ))}
-                  </div>
-                  <input
-                    type="number"
-                    placeholder="Своя сумма"
-                    value={customAmount}
-                    onChange={e => { setCustomAmount(e.target.value); setSelectedAmount(null); }}
-                    className="w-full bg-input border border-border rounded px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary mono"
-                  />
-                </div>
-
-                {/* Name */}
-                <div>
-                  <label className="block text-xs text-muted-foreground mb-2 font-medium uppercase tracking-widest">
-                    Ваше имя
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Аноним"
-                    value={name}
-                    onChange={e => setName(e.target.value)}
-                    className="w-full bg-input border border-border rounded px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
-                  />
-                </div>
-
-                {/* Message */}
-                <div>
-                  <label className="block text-xs text-muted-foreground mb-2 font-medium uppercase tracking-widest">
-                    Сообщение
-                  </label>
-                  <textarea
-                    placeholder="Напишите что-нибудь стримеру..."
-                    value={message}
-                    onChange={e => setMessage(e.target.value)}
-                    rows={3}
-                    className="w-full bg-input border border-border rounded px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary resize-none"
-                  />
-                </div>
-
-                {/* Payment methods */}
-                <div>
-                  <label className="block text-xs text-muted-foreground mb-2 font-medium uppercase tracking-widest">
-                    Способ оплаты
-                  </label>
-                  <div className="grid grid-cols-3 gap-2">
-                    {[
-                      { id: "card", label: "Карта", icon: "CreditCard" },
-                      { id: "sbp", label: "СБП", icon: "Smartphone" },
-                      { id: "yoomoney", label: "ЮMoney", icon: "Wallet" },
-                    ].map(method => (
-                      <button
-                        key={method.id}
-                        onClick={() => setPaymentMethod(method.id as "card" | "sbp" | "yoomoney")}
-                        className={`amount-chip flex flex-col items-center gap-1 py-2.5 ${paymentMethod === method.id ? "selected" : ""}`}
-                      >
-                        <Icon name={method.icon as "CreditCard" | "Smartphone" | "Wallet"} size={16} />
-                        <span className="text-xs">{method.label}</span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* CTA */}
-                <button
-                  className="donate-btn w-full rounded py-3 text-sm"
-                  disabled={finalAmount < 10}
-                >
-                  {finalAmount >= 10
-                    ? `Задонатить ₽ ${finalAmount.toLocaleString("ru")}`
-                    : "Введите сумму от ₽ 10"}
-                </button>
-
-                <p className="text-center text-xs text-muted-foreground">
-                  Безопасный платёж · Без комиссии для донора
-                </p>
-              </div>
-            </div>
+      {/* Tabs */}
+      <div className="border-b border-border bg-card/30 sticky top-16 z-40 backdrop-blur-sm">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="flex gap-1 py-2">
+            {([
+              { id: "ranks",    label: "Ранги",    emoji: "👑" },
+              { id: "currency", label: "Валюта",   emoji: "🪙" },
+              { id: "items",    label: "Предметы", emoji: "⚔️" },
+              { id: "titles",   label: "Титулы",   emoji: "🏷️" },
+            ] as { id: Tab; label: string; emoji: string }[]).map(t => (
+              <button
+                key={t.id}
+                onClick={() => setTab(t.id)}
+                className={`tab-btn flex items-center gap-1.5 ${tab === t.id ? "active" : ""}`}
+              >
+                <span>{t.emoji}</span>
+                {t.label}
+              </button>
+            ))}
           </div>
         </div>
+      </div>
 
-        {/* Donate Feed */}
-        <div className="animate-fade-in-delay-3">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-sm font-semibold uppercase tracking-widest text-muted-foreground">
-              Последние поступления
-            </h2>
-            <span className="text-xs text-muted-foreground mono">{RECENT_DONATES.length} за сегодня</span>
-          </div>
+      {/* Content */}
+      <div className="max-w-6xl mx-auto px-6 py-10">
 
-          <div className="border border-border rounded-lg bg-card divide-y divide-border overflow-hidden">
-            {RECENT_DONATES.map(d => (
-              <div key={d.id} className="flex items-start gap-4 px-5 py-4 hover:bg-muted/20 transition-colors">
-                <div className="w-9 h-9 rounded-md bg-muted border border-border flex items-center justify-center flex-shrink-0">
-                  <span className="text-xs font-semibold text-muted-foreground mono">{d.avatar}</span>
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-baseline justify-between gap-2 mb-1">
-                    <span className="text-sm font-semibold text-foreground">{d.name}</span>
-                    <span className="text-sm font-bold text-primary mono flex-shrink-0">
-                      ₽ {d.amount.toLocaleString("ru")}
+        {/* RANKS */}
+        {tab === "ranks" && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            {RANKS.map((rank, i) => (
+              <div key={rank.id} className={`rank-card ${rank.cls} animate-fade-up-${i + 1} p-6`}>
+                {rank.popular && (
+                  <div className="absolute top-3 right-3">
+                    <span className="text-xs font-black px-2 py-0.5 rounded bg-primary text-primary-foreground uppercase tracking-widest">
+                      Топ
                     </span>
                   </div>
-                  {d.message && (
-                    <p className="text-xs text-muted-foreground leading-relaxed mb-1 truncate">
-                      {d.message}
-                    </p>
+                )}
+                <div className="text-3xl mb-3">{rank.emoji}</div>
+                <div className="rank-badge mb-4">{rank.name}</div>
+                <div className="text-2xl font-black text-foreground mb-1">₽ {rank.price}</div>
+                <div className="text-xs text-muted-foreground mb-5">навсегда</div>
+
+                <ul className="space-y-2 mb-6">
+                  {rank.perks.map(perk => (
+                    <li key={perk} className="flex items-start gap-2 text-xs text-muted-foreground">
+                      <Icon name="Check" size={12} className="mt-0.5 flex-shrink-0" style={{ color: rank.color }} />
+                      {perk}
+                    </li>
+                  ))}
+                </ul>
+
+                <button
+                  onClick={() => toggleCart(rank.id)}
+                  className={`buy-btn ${cart.includes(rank.id) ? "opacity-70" : ""}`}
+                >
+                  {cart.includes(rank.id) ? "✓ Добавлено" : "Купить"}
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* CURRENCY */}
+        {tab === "currency" && (
+          <div>
+            <div className="mb-8 text-center">
+              <h2 className="text-2xl font-black text-foreground mb-1">Игровая валюта</h2>
+              <p className="text-sm text-muted-foreground">Монеты зачисляются на аккаунт моментально</p>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-4xl mx-auto">
+              {CURRENCY.map((c, i) => (
+                <div
+                  key={c.id}
+                  onClick={() => setSelectedCurrency(c.id)}
+                  className={`currency-card animate-fade-up-${i + 1} ${selectedCurrency === c.id ? "selected" : ""}`}
+                >
+                  {c.best && (
+                    <div className="absolute top-3 right-3">
+                      <span className="text-xs font-black px-2 py-0.5 rounded bg-yellow-500/20 text-yellow-400 border border-yellow-500/30 uppercase">
+                        Выгодно
+                      </span>
+                    </div>
                   )}
-                  <span className="text-xs text-muted-foreground/60 mono">{d.time}</span>
+                  <div className="text-4xl mb-3">{c.emoji}</div>
+                  <div className="text-2xl font-black text-foreground">
+                    {c.coins.toLocaleString("ru")}
+                    <span className="text-sm font-normal text-muted-foreground ml-1">монет</span>
+                  </div>
+                  {c.bonus > 0 && (
+                    <div className="text-xs text-green-400 font-bold mt-1">+{c.bonus}% бонус</div>
+                  )}
+                  <div className="mt-4 text-xl font-black" style={{ color: "hsl(43 95% 55%)" }}>
+                    ₽ {c.price}
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="mt-8 text-center">
+              <button className="px-10 py-3 rounded-lg bg-yellow-500 text-yellow-950 font-black text-sm uppercase tracking-wider hover:brightness-110 transition-all hover:-translate-y-0.5">
+                Купить за ₽ {CURRENCY.find(c => c.id === selectedCurrency)?.price}
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* ITEMS */}
+        {tab === "items" && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {ITEMS.map((item, i) => (
+              <div key={item.id} className={`bg-card border border-border rounded-lg p-5 flex items-center gap-4 cursor-pointer transition-all duration-200 hover:border-primary/40 hover:-translate-y-1 animate-fade-up-${i + 1}`}>
+                <div className="text-4xl flex-shrink-0 w-14 h-14 rounded-lg bg-muted flex items-center justify-center">
+                  {item.emoji}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="font-black text-foreground text-sm">{item.name}</div>
+                  <div className="text-xs text-muted-foreground mt-0.5 truncate">{item.desc}</div>
+                  <div className="mt-2 flex items-center justify-between">
+                    <span className="text-base font-black text-primary">₽ {item.price}</span>
+                    <button
+                      onClick={() => toggleCart(item.id)}
+                      className={`text-xs px-3 py-1 rounded font-bold transition-all ${
+                        cart.includes(item.id)
+                          ? "bg-primary/20 text-primary border border-primary/30"
+                          : "bg-primary text-primary-foreground hover:brightness-110"
+                      }`}
+                    >
+                      {cart.includes(item.id) ? "✓ В корзине" : "Купить"}
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}
           </div>
-        </div>
+        )}
 
-        {/* Footer */}
-        <div className="mt-12 pt-6 border-t border-border flex items-center justify-between text-xs text-muted-foreground">
-          <span className="mono">DONATIX · 2026</span>
-          <div className="flex items-center gap-4">
-            <a href="#" className="hover:text-foreground transition-colors">Условия</a>
-            <a href="#" className="hover:text-foreground transition-colors">Конфиденциальность</a>
+        {/* TITLES */}
+        {tab === "titles" && (
+          <div>
+            <div className="mb-8 text-center">
+              <h2 className="text-2xl font-black text-foreground mb-1">Уникальные титулы</h2>
+              <p className="text-sm text-muted-foreground">Отображаются перед ником в чате и над головой</p>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-3xl mx-auto">
+              {TITLES.map((t, i) => (
+                <div key={t.id} className={`bg-card border border-border rounded-lg p-5 cursor-pointer transition-all duration-200 hover:-translate-y-1 animate-fade-up-${i + 1}`}
+                  style={{ borderColor: cart.includes(t.id) ? t.color : undefined }}
+                >
+                  <div className="flex items-center gap-3 mb-4">
+                    <span className="text-2xl">{t.emoji}</span>
+                    <span className="font-black text-sm" style={{ color: t.color }}>{t.name}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-lg font-black text-foreground">₽ {t.price}</span>
+                    <button
+                      onClick={() => toggleCart(t.id)}
+                      className="text-xs px-3 py-1.5 rounded font-bold transition-all hover:brightness-110"
+                      style={{
+                        background: cart.includes(t.id) ? `${t.color}22` : t.color,
+                        color: cart.includes(t.id) ? t.color : "hsl(222 25% 7%)",
+                        border: cart.includes(t.id) ? `1px solid ${t.color}55` : "none",
+                      }}
+                    >
+                      {cart.includes(t.id) ? "✓ В корзине" : "Купить"}
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Footer */}
+      <footer className="border-t border-border mt-10">
+        <div className="max-w-6xl mx-auto px-6 py-6 flex flex-col md:flex-row items-center justify-between gap-3 text-xs text-muted-foreground">
+          <div className="flex items-center gap-2">
+            <span className="text-base">⛏️</span>
+            <span className="font-black text-foreground">ShockByte</span>
+            <span>· play.shockbyte.ru</span>
+          </div>
+          <div className="flex gap-5">
+            <a href="#" className="hover:text-foreground transition-colors">Правила</a>
             <a href="#" className="hover:text-foreground transition-colors">Поддержка</a>
+            <a href="#" className="hover:text-foreground transition-colors">Discord</a>
           </div>
         </div>
-      </div>
+      </footer>
     </div>
   );
 }
