@@ -8,7 +8,7 @@ const RANKS = [
     id: "premium",
     cls: "rank-premium",
     name: "PREMIUM",
-    price: 449,
+    price: 79,
     color: "hsl(210 80% 58%)",
     emoji: "💎",
     perks: ["Приставка [PREMIUM]", "/fly на 1 час", "3 точки дома", "Доступ к /nick", "Доступ к любому цвету"],
