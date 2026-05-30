@@ -97,7 +97,6 @@ export default function Index() {
 
           <div className="hidden md:flex items-center gap-6 text-sm">
             <span className="text-muted-foreground text-xs font-mono">play.shockbyte.pro</span>
-            <span className="server-online">847 онлайн</span>
           </div>
 
           <button
