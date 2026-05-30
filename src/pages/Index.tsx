@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Icon from "@/components/ui/icon";
 
-type Tab = "ranks" | "items" | "titles";
+type Tab = "ranks" | "titles";
 
 const RANKS = [
   {
@@ -26,14 +26,7 @@ const RANKS = [
 ];
 
 
-const ITEMS = [
-  { id: "i1", name: "Стартовый кит",    price: 149, emoji: "🎒", desc: "Алмазный набор + еда на старт" },
-  { id: "i2", name: "Кейс «Фортуна»",   price: 299, emoji: "🎁", desc: "Случайный предмет высокого уровня" },
-  { id: "i3", name: "Набор строителя",   price: 399, emoji: "🏗️", desc: "Редкие блоки + инструменты" },
-  { id: "i4", name: "Кейс «Легенда»",   price: 599, emoji: "⚔️", desc: "Топовое оружие с зачарованиями" },
-  { id: "i5", name: "Эндер-набор",       price: 799, emoji: "🌌", desc: "Снаряжение для End-рейдов" },
-  { id: "i6", name: "Кит Повелителя",   price: 1499, emoji: "🔱", desc: "Лучший кит на сервере" },
-];
+
 
 const TITLES = [
   { id: "t1", name: "«Герой Сервера»",   price: 5, color: "hsl(43 95% 55%)",  emoji: "🏆" },
@@ -118,7 +111,6 @@ export default function Index() {
           <div className="flex gap-1 py-2">
             {([
               { id: "ranks",    label: "Ранги",    emoji: "👑" },
-              { id: "items",    label: "Предметы", emoji: "⚔️" },
               { id: "titles",   label: "Титулы",   emoji: "🏷️" },
             ] as { id: Tab; label: string; emoji: string }[]).map(t => (
               <button
@@ -169,79 +161,6 @@ export default function Index() {
                 >
                   {cart.includes(rank.id) ? "✓ Добавлено" : "Купить"}
                 </button>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {/* CURRENCY */}
-        {tab === "currency" && (
-          <div>
-            <div className="mb-8 text-center">
-              <h2 className="text-2xl font-black text-foreground mb-1">Игровая валюта</h2>
-              <p className="text-sm text-muted-foreground">Монеты зачисляются на аккаунт моментально</p>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-4xl mx-auto">
-              {CURRENCY.map((c, i) => (
-                <div
-                  key={c.id}
-                  onClick={() => setSelectedCurrency(c.id)}
-                  className={`currency-card animate-fade-up-${i + 1} ${selectedCurrency === c.id ? "selected" : ""}`}
-                >
-                  {c.best && (
-                    <div className="absolute top-3 right-3">
-                      <span className="text-xs font-black px-2 py-0.5 rounded bg-yellow-500/20 text-yellow-400 border border-yellow-500/30 uppercase">
-                        Выгодно
-                      </span>
-                    </div>
-                  )}
-                  <div className="text-4xl mb-3">{c.emoji}</div>
-                  <div className="text-2xl font-black text-foreground">
-                    {c.coins.toLocaleString("ru")}
-                    <span className="text-sm font-normal text-muted-foreground ml-1">монет</span>
-                  </div>
-                  {c.bonus > 0 && (
-                    <div className="text-xs text-green-400 font-bold mt-1">+{c.bonus}% бонус</div>
-                  )}
-                  <div className="mt-4 text-xl font-black" style={{ color: "hsl(43 95% 55%)" }}>
-                    ₽ {c.price}
-                  </div>
-                </div>
-              ))}
-            </div>
-            <div className="mt-8 text-center">
-              <button className="px-10 py-3 rounded-lg bg-yellow-500 text-yellow-950 font-black text-sm uppercase tracking-wider hover:brightness-110 transition-all hover:-translate-y-0.5">
-                Купить за ₽ {CURRENCY.find(c => c.id === selectedCurrency)?.price}
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* ITEMS */}
-        {tab === "items" && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {ITEMS.map((item, i) => (
-              <div key={item.id} className={`bg-card border border-border rounded-lg p-5 flex items-center gap-4 cursor-pointer transition-all duration-200 hover:border-primary/40 hover:-translate-y-1 animate-fade-up-${i + 1}`}>
-                <div className="text-4xl flex-shrink-0 w-14 h-14 rounded-lg bg-muted flex items-center justify-center">
-                  {item.emoji}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="font-black text-foreground text-sm">{item.name}</div>
-                  <div className="text-xs text-muted-foreground mt-0.5 truncate">{item.desc}</div>
-                  <div className="mt-2 flex items-center justify-between">
-                    <span className="text-base font-black text-primary">₽ {item.price}</span>
-                    <button
-                      onClick={() => toggleCart(item.id)}
-                      className={`text-xs px-3 py-1 rounded font-bold transition-all ${
-                        cart.includes(item.id)
-                          ? "bg-primary/20 text-primary border border-primary/30"
-                          : "bg-primary text-primary-foreground hover:brightness-110"
-                      }`}
-                    >
-                      {cart.includes(item.id) ? "✓ В корзине" : "Купить"}
-                    </button>
-                  </div>
-                </div>
               </div>
             ))}
           </div>
