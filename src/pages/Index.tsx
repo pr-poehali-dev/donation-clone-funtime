@@ -11,7 +11,7 @@ const RANKS = [
     price: 449,
     color: "hsl(210 80% 58%)",
     emoji: "💎",
-    perks: ["Приставка [PREMIUM]", "/fly на 1 час", "10 точек дома", "/heal & /feed", "Доступ к /tpa"],
+    perks: ["Приставка [PREMIUM]", "/fly на 1 час", "3 точки дома", "/heal & /feed", "Доступ к /tpa"],
     popular: true,
   },
   {
