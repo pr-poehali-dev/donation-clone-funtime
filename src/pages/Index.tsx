@@ -70,7 +70,7 @@ const TITLES = [
 
 const STATS = [
   { label: "Онлайн сейчас", value: "847", icon: "Users" as const },
-  { label: "Всего игроков", value: "24 391", icon: "Globe" as const },
+  { label: "Всего игроков", value: "%online%", icon: "Globe" as const },
   { label: "Версия", value: "1.16.5-1.21.1", icon: "Layers" as const },
   { label: "Аптайм", value: "99.9%", icon: "Activity" as const },
 ];
