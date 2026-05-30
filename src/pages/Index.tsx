@@ -27,7 +27,7 @@ const RANKS = [
 
 const CURRENCY = [
   { id: "c1", coins: 1000,  bonus: 0,   price: 99,  emoji: "🪙" },
-  { id: "c2", coins: 3000,  bonus: 10,  price: 249, emoji: "🪙" },
+  { id: "c2", coins: 3000,  bonus: 10,  price: 5, emoji: "🪙" },
   { id: "c3", coins: 7500,  bonus: 25,  price: 499, emoji: "💰" },
   { id: "c4", coins: 20000, bonus: 50,  price: 999, emoji: "💰", best: true },
 ];
