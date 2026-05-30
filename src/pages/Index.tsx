@@ -36,12 +36,12 @@ const ITEMS = [
 ];
 
 const TITLES = [
-  { id: "t1", name: "«Герой Сервера»",   price: 249, color: "hsl(43 95% 55%)",  emoji: "🏆" },
-  { id: "t2", name: "«Тёмный Лорд»",     price: 349, color: "hsl(265 70% 62%)", emoji: "🌑" },
-  { id: "t3", name: "«Дракон»",          price: 399, color: "hsl(0 72% 55%)",   emoji: "🐉" },
-  { id: "t4", name: "«Хранитель»",       price: 299, color: "hsl(210 80% 58%)", emoji: "🛡️" },
-  { id: "t5", name: "«Бог Войны»",       price: 499, color: "hsl(0 65% 50%)",   emoji: "⚔️" },
-  { id: "t6", name: "«Строитель Эпох»",  price: 199, color: "hsl(142 70% 45%)", emoji: "🏛️" },
+  { id: "t1", name: "«Герой Сервера»",   price: 5, color: "hsl(43 95% 55%)",  emoji: "🏆" },
+  { id: "t2", name: "«Тёмный Лорд»",     price: 5, color: "hsl(265 70% 62%)", emoji: "🌑" },
+  { id: "t3", name: "«Дракон»",          price: 5, color: "hsl(0 72% 55%)",   emoji: "🐉" },
+  { id: "t4", name: "«Хранитель»",       price: 5, color: "hsl(210 80% 58%)", emoji: "🛡️" },
+  { id: "t5", name: "«Бог Войны»",       price: 5, color: "hsl(0 65% 50%)",   emoji: "⚔️" },
+  { id: "t6", name: "«Строитель Эпох»",  price: 5, color: "hsl(142 70% 45%)", emoji: "🏛️" },
 ];
 
 const STATS = [
