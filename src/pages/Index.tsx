@@ -23,15 +23,6 @@ const RANKS = [
     emoji: "👑",
     perks: ["Приставка [ELITE]", "Все права PREMIUM", "Приоритетный вход", "Доступ к /god", "Доступ к /vanish"],
   },
-  {
-    id: "legend",
-    cls: "rank-legend",
-    name: "LEGEND",
-    price: 1799,
-    color: "hsl(265 70% 62%)",
-    emoji: "🔮",
-    perks: ["Приставка [LEGEND]", "Все права ELITE", "Доступ к /v", "Уникальный плащ", "Поддержка 24/7"],
-  },
 ];
 
 const CURRENCY = [
