@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Icon from "@/components/ui/icon";
 
-type Tab = "ranks" | "currency" | "items" | "titles";
+type Tab = "ranks" | "items" | "titles";
 
 const RANKS = [
   {
@@ -25,12 +25,6 @@ const RANKS = [
   },
 ];
 
-const CURRENCY = [
-  { id: "c1", coins: 1000,  bonus: 0,   price: 99,  emoji: "🪙" },
-  { id: "c2", coins: 3000,  bonus: 10,  price: 5, emoji: "🪙" },
-  { id: "c3", coins: 7500,  bonus: 25,  price: 499, emoji: "💰" },
-  { id: "c4", coins: 20000, bonus: 50,  price: 999, emoji: "💰", best: true },
-];
 
 const ITEMS = [
   { id: "i1", name: "Стартовый кит",    price: 149, emoji: "🎒", desc: "Алмазный набор + еда на старт" },
@@ -57,8 +51,6 @@ const STATS = [
 export default function Index() {
   const [tab, setTab] = useState<Tab>("ranks");
   const [cart, setCart] = useState<string[]>([]);
-  const [selectedCurrency, setSelectedCurrency] = useState<string>("c4");
-
   const toggleCart = (id: string) =>
     setCart(prev => prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]);
 
@@ -126,7 +118,6 @@ export default function Index() {
           <div className="flex gap-1 py-2">
             {([
               { id: "ranks",    label: "Ранги",    emoji: "👑" },
-              { id: "currency", label: "Валюта",   emoji: "🪙" },
               { id: "items",    label: "Предметы", emoji: "⚔️" },
               { id: "titles",   label: "Титулы",   emoji: "🏷️" },
             ] as { id: Tab; label: string; emoji: string }[]).map(t => (
